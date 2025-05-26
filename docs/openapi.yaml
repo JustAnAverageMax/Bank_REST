@@ -1,1 +1,26 @@
-# Здесь будет OpenAPI описание всех доступных эндпоинтов и моделей данных.
+openapi: 3.0.0
+info:
+  title: Bank card management API
+  version: 0.0.1
+servers: [ ]
+
+paths:
+  /api/v1/cards:
+    get:
+      tags:
+        - Cards
+      summary: Returns list of user cards
+      parameters:
+
+      responses:
+        200:
+          $ref: '#/components/responses/UserCardsResponse'
+
+components:
+  parameters:
+
+
+  requestBodies:
+
+
+  responses:
