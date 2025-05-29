@@ -1,5 +1,6 @@
 server:
   port: 8080
+
 spring:
   profiles:
     active: ${ACTIVE_PROFILE}
@@ -15,9 +16,15 @@ spring:
       ddl-auto: none
     show-sql: false
     generate-ddl: false
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
-    url: /docs/openapi.yaml
-  api-docs:
-    enabled: false
+    url: /v3/api-docs
+
+jwt:
+  secret: ${JWT_SECRET}
+  access:
+    duration: PT20M
+  refresh:
+    duration: PT30D
