@@ -5,22 +5,206 @@ info:
 servers: [ ]
 
 paths:
-  /api/v1/cards:
+  /cards:
     get:
+      operationId: findAllCards
+      x-method-name: findAll
       tags:
-        - Cards
-      summary: Returns list of user cards
+        - Card
+      summary: Return paginated list of all cards
       parameters:
-
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
       responses:
         200:
-          $ref: '#/components/responses/UserCardsResponse'
+          $ref: '#/components/responses/CardsPageResponse'
+        400:
+          $ref: '#/components/responses/ErrorResponse'
+        401:
+          $ref: '#/components/responses/ErrorResponse'
+        403:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /cards/{id}:
+    get:
+      operationId: findCardById
+      x-method-name: findById
+      tags:
+        - Card
+      summary: Return single card detailed response
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        200:
+          $ref: '#/components/responses/CardResponse'
+        400:
+          $ref: '#/components/responses/ErrorResponse'
+        401:
+          $ref: '#/components/responses/ErrorResponse'
+        403:
+          $ref: '#/components/responses/ErrorResponse'
+        404:
+          $ref: '#/components/responses/ErrorResponse'
+
+    delete:
+      operationId: deleteCard
+      x-method-name: delete
+      tags:
+        - Card
+      summary: Delete card based on id
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        204:
+          description: Card successfully deleted
+        400:
+          $ref: '#/components/responses/ErrorResponse'
+        401:
+          $ref: '#/components/responses/ErrorResponse'
+        403:
+          $ref: '#/components/responses/ErrorResponse'
+        404:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /cards/me:
+    get:
+      operationId: findAllUserCards
+      x-method-name: findAll
+      tags:
+        - Card
+      summary: Return paginated list of user cards
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+      responses:
+        200:
+          $ref: '#/components/responses/CardsPageResponse'
+        400:
+          $ref: '#/components/responses/ErrorResponse'
+        401:
+          $ref: '#/components/responses/ErrorResponse'
+        403:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /users:
+    get:
+      operationId: findAllUsers
+      x-method-name: findAll
+      tags:
+        - User
+      summary: Return list of users
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+      responses:
+        200:
+          $ref: '#/components/responses/UsersPageResponse'
+        400:
+          $ref: '#/components/responses/ErrorResponse'
+        401:
+          $ref: '#/components/responses/ErrorResponse'
+        403:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /users/{id}:
+    get:
+      operationId: findUserById
+      x-method-name: findById
+      tags:
+        - User
+      summary: Return single user details
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
+        400:
+          $ref: '#/components/responses/ErrorResponse'
+        401:
+          $ref: '#/components/responses/ErrorResponse'
+        403:
+          $ref: '#/components/responses/ErrorResponse'
+        404:
+          $ref: '#/components/responses/ErrorResponse'
+
+    delete:
+      operationId: deleteUser
+      x-method-name: delete
+      tags:
+        - User
+      summary: Deletes user based on id
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        204:
+          description: User successfully deleted
+        400:
+          $ref: '#/components/responses/ErrorResponse'
+        401:
+          $ref: '#/components/responses/ErrorResponse'
+        403:
+          $ref: '#/components/responses/ErrorResponse'
+        404:
+          $ref: '#/components/responses/ErrorResponse'
 
 components:
   parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
 
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 0
 
-  requestBodies:
-
+    Size:
+      name: size
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 20
 
   responses:
+    CardResponse:
+      description: Single card detailed response
+      content:
+        application/json:
+          schema:
+            $ref: './model.yaml#/components/schemas/CardRs'
+
+    CardsPageResponse:
+      description: List of user cards
+      content:
+        application/json:
+          schema:
+            $ref: './model.yaml#/components/schemas/CardsPageRs'
+
+    UserResponse:
+      description: Single user detailed response
+      content:
+        application/json:
+          schema:
+            $ref: './model.yaml#/components/schemas/UserRs'
+
+    UsersPageResponse:
+      description: List of users
+      content:
+        application/json:
+          schema:
+            $ref: './model.yaml#/components/schemas/UsersPageRs'
+
+    ErrorResponse:
+      description: Generic error response
+      content:
+        application/json:
+          schema:
+            $ref: './model.yaml#/components/schemas/ErrorRs'

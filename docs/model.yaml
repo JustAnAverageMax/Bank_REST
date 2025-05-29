@@ -21,19 +21,66 @@ components:
           description: Expiration date of the card in format YYYY-MM-DD
           example: '2025-01-01'
         status:
-          $ref: '#components/schemas/CardStatus'
+          $ref: '#/components/schemas/CardStatus'
         balance:
           type: number
           format: double
           description: Available balance on the card
           example: 1000.75
-        required:
-          - id
-          - number
-          - owner
-          - expirationDate
-          - status
-          - balance
+      required:
+        - id
+        - number
+        - owner
+        - expirationDate
+        - status
+        - balance
+
+    UserRs:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier of user
+        name:
+          type: string
+          description: User's name
+        surname:
+          type: string
+          description: User's surname
+        blocked:
+          type: boolean
+          description: Flag that represents user blockage
+        registered_at:
+          type: string
+          format: date
+          description: User registration date
+
+    CardsPageRs:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PageRs'
+      properties:
+        content:
+          type: array
+          description: The list of cards on page
+          items:
+            $ref: '#/components/schemas/CardRs'
+      required:
+        - content
+
+    UsersPageRs:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PageRs'
+      properties:
+        content:
+          type: array
+          description: The list of users on page
+          items:
+            $ref: '#/components/schemas/UserRs'
+      required:
+        - content
 
     CardStatus:
       type: string
@@ -42,3 +89,66 @@ components:
         - ACTIVE
         - BLOCKED
         - EXPIRED
+
+    PageRs:
+      type: object
+      description: Base page model
+      properties:
+        content:
+          type: array
+          description: The list of items on the current page
+          items:
+            type: object
+            description: List item
+        totalElements:
+          type: integer
+          format: int64
+          description: Total amount of elements
+        totalPages:
+          type: integer
+          description: Total amount of pages
+        page:
+          type: integer
+          description: Current page (starts with 0)
+        size:
+          type: integer
+          description: Amount of elements per page
+        elementsAmount:
+          type: integer
+          description: Amount of elements on page
+        first:
+          type: boolean
+          description: Flag that indicates if this is the first page
+        last:
+          type: boolean
+          description: Flag that indicates if this is the last page
+        empty:
+          type: boolean
+          description: Flag that indicates if this page is empty
+      required:
+        - content
+        - totalElements
+        - totalPages
+        - page
+        - size
+        - elementsAmount
+        - first
+        - last
+        - empty
+
+    ErrorRs:
+      type: object
+      description: Generic error response
+      properties:
+        errorCodes:
+          type: array
+          items:
+            type: string
+        errorDescription:
+          type: string
+        errorDate:
+          type: string
+          format: datetime
+      required:
+        - errorCodes
+        - errorDescription
