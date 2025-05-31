@@ -1,5 +1,94 @@
 components:
   schemas:
+    CardCreationRq:
+      type: object
+      properties:
+        userId:
+          type: integer
+          nullable: false
+          format: int64
+          description: Unique identifier of user for card creation
+        number:
+          type: string
+          description: Card number in format XXXX XXXX XXXX XXXX
+          example: "1234 5678 9012 3456"
+          x-field-extra-annotation: >-
+            @Pattern(regexp = "^[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}$", message = "Card number must be in format XXXX XXXX XXXX XXXX")
+            @NotBlank(message = "Card number should not be blank")
+      required:
+        - userId
+        - number
+
+    AuthenticationRq:
+      type: object
+      properties:
+        email:
+          type: string
+          description: User email used in registration
+          example: 'example@gmail.com'
+          x-field-extra-annotation: >-
+            @Email(message = "Wrong email format. Should follow pattern: example@gmail.com")
+            @NotBlank(message = "Email field should not be blank")
+        password:
+          type: string
+          description: User password used in registration
+          example: 'Password123'
+          x-field-extra-annotation: >-
+            @Size(min = 8, max = 32, message = "Password length should be between 8 and 32")
+            @NotBlank(message = "Password should not be blank")
+      required:
+        - email
+        - password
+
+    AuthenticationRs:
+      type: object
+      description: Response containing access and refresh token for authenticated user
+      properties:
+        accessToken:
+          type: string
+          description: Access token for accessing user API functionality
+        refreshToken:
+          type: string
+          description: Refresh token for refreshing access token
+      required:
+        - accessToken
+        - refreshToken
+
+    RegistrationRq:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: User first name
+          example: 'John'
+          x-field-extra-annotation: >-
+            @NotBlank(message = "First name should not be blank")
+        lastName:
+          type: string
+          description: User last name
+          example: 'Doe'
+          x-field-extra-annotation: >-
+            @NotBlank(message = "Last name should not be blank")
+        email:
+          type: string
+          description: User email
+          example: 'j.doe@gmail.com'
+          x-field-extra-annotation: >-
+            @Email(message = "Wrong email format. Should follow pattern: example@gmail.com")
+            @NotBlank(message = "Email should not be blank")
+        password:
+          type: string
+          description: User password
+          example: 'Password123'
+          x-field-extra-annotation: >-
+            @Size(min = 8, max = 32, message = "Password length should be between 8 and 32")
+            @NotBlank(message = "Password should not be blank")
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+
     CardRs:
       type: object
       properties:
@@ -140,15 +229,39 @@ components:
       type: object
       description: Generic error response
       properties:
-        errorCodes:
-          type: array
-          items:
-            type: string
+        errorCode:
+          type: integer
         errorDescription:
           type: string
         errorDate:
           type: string
           format: datetime
       required:
-        - errorCodes
+        - errorCode
         - errorDescription
+        - errorDate
+
+    ValidationErrorRs:
+      type: object
+      description: Response containing validation errors
+      properties:
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldViolationRs'
+      required:
+        - violations
+
+    FieldViolationRs:
+      type: object
+      description: Response containing a single field violation information
+      properties:
+        fieldName:
+          type: string
+          description: Field name
+        message:
+          type: string
+          description: Violation message
+      required:
+        - fieldName
+        - message

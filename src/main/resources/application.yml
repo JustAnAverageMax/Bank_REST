@@ -27,4 +27,13 @@ jwt:
   access:
     duration: PT20M
   refresh:
-    duration: PT30D
+    duration: P3D
+
+crypto:
+  algorithm: AES
+  cipher: AES/CBC/PKCS5Padding
+  key: ${CRYPTO_KEY}
+  ivLength: 16
+  encoding: UTF-8
+  hash:
+    name: HmacSHA256
