@@ -3,12 +3,34 @@ info:
   title: Bank card management API
   version: 0.0.1
 servers: [ ]
+security:
+  - bearerAuth: []
 
 paths:
   /cards:
+    post:
+      operationId: saveCard
+      tags:
+        - Card
+      summary: Save card and link it to provided user id
+      requestBody:
+        $ref: '#/components/requestBodies/CardCreationRequest'
+      responses:
+        201:
+          $ref: '#/components/responses/CardResponse'
+        400:
+          $ref: '#/components/responses/ValidationErrorResponse'
+        401:
+          $ref: '#/components/responses/ErrorResponse'
+        403:
+          $ref: '#/components/responses/ErrorResponse'
+        404:
+          $ref: '#/components/responses/ErrorResponse'
+        409:
+          $ref: '#/components/responses/ErrorResponse'
+
     get:
       operationId: findAllCards
-      x-method-name: findAll
       tags:
         - Card
       summary: Return paginated list of all cards
@@ -28,7 +50,6 @@ paths:
   /cards/{id}:
     get:
       operationId: findCardById
-      x-method-name: findById
       tags:
         - Card
       summary: Return single card detailed response
@@ -48,7 +69,6 @@ paths:
 
     delete:
       operationId: deleteCard
-      x-method-name: delete
       tags:
         - Card
       summary: Delete card based on id
@@ -68,8 +88,9 @@ paths:
 
   /cards/me:
     get:
+      security:
+        - bearerAuth: [ ]
       operationId: findAllUserCards
-      x-method-name: findAll
       tags:
         - Card
       summary: Return paginated list of user cards
@@ -89,7 +110,6 @@ paths:
   /users:
     get:
       operationId: findAllUsers
-      x-method-name: findAll
       tags:
         - User
       summary: Return list of users
@@ -109,7 +129,6 @@ paths:
   /users/{id}:
     get:
       operationId: findUserById
-      x-method-name: findById
       tags:
         - User
       summary: Return single user details
@@ -129,7 +148,6 @@ paths:
 
     delete:
       operationId: deleteUser
-      x-method-name: delete
       tags:
         - User
       summary: Deletes user based on id
@@ -147,7 +165,46 @@ paths:
         404:
           $ref: '#/components/responses/ErrorResponse'
 
+  /login:
+    post:
+      operationId: login
+      tags:
+        - Authentication
+      summary: Authenticate user
+      requestBody:
+        $ref: '#/components/requestBodies/AuthenticationRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/AuthenticationResponse'
+        400:
+          $ref: '#/components/responses/ValidationErrorResponse'
+        404:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /register:
+    post:
+      operationId: register
+      tags:
+        - Authentication
+      summary: Register user
+      requestBody:
+        $ref: '#/components/requestBodies/RegistrationRequest'
+      responses:
+        201:
+          $ref: '#/components/responses/AuthenticationResponse'
+        400:
+          $ref: '#/components/responses/ValidationErrorResponse'
+        409:
+          $ref: '#/components/responses/ErrorResponse'
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Provide this endpoint with jwt token in order to work with it
+
   parameters:
     Id:
       name: id
@@ -174,6 +231,12 @@ components:
         default: 20
 
   responses:
+    AuthenticationResponse:
+      description: Response containing access and refresh tokens
+      content:
+        application/json:
+          schema:
+            $ref: './model.yaml#/components/schemas/AuthenticationRs'
     CardResponse:
       description: Single card detailed response
       content:
@@ -208,3 +271,32 @@ components:
         application/json:
           schema:
             $ref: './model.yaml#/components/schemas/ErrorRs'
+
+    ValidationErrorResponse:
+      description: Response containing validation errors
+      content:
+        application/json:
+          schema:
+            $ref: './model.yaml#/components/schemas/ValidationErrorRs'
+
+  requestBodies:
+    CardCreationRequest:
+      description: Request for card creation
+      content:
+        application/json:
+          schema:
+            $ref: './model.yaml#/components/schemas/CardCreationRq'
+
+    AuthenticationRequest:
+      description: Request for user authentication
+      content:
+        application/json:
+          schema:
+            $ref: './model.yaml#/components/schemas/AuthenticationRq'
+
+    RegistrationRequest:
+      description: Request for user registration
+      content:
+        application/json:
+          schema:
+            $ref: './model.yaml#/components/schemas/RegistrationRq'
